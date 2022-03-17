@@ -1,0 +1,26 @@
+﻿@model MyTasks.Core.ViewModels.CategoryViewModel
+
+@{
+    ViewData["Title"] = Model.Header;
+}
+
+<h2>@Model.Header</h2>
+
+@using (Html.BeginForm("Category", "Category"))
+{
+    <p class="alert alert-info">Pole nazwa jest <strong>wymagane</strong></p>
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Category.Id)
+    @Html.HiddenFor(m => m.Category.UserId)
+
+
+    <div class="mb-3">
+        @Html.LabelFor(m => m.Category.Name)
+        @Html.TextBoxFor(m => m.Category.Name, new { @class = "form-control", autofocus = "autofocus" })
+        @Html.ValidationMessageFor(m => m.Category.Name)
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-lg">Zapisz</button>
+}
+

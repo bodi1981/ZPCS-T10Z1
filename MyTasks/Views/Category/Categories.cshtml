@@ -1,0 +1,104 @@
+﻿@model MyTasks.Core.ViewModels.CategoriesViewModel
+
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<h2>Kategorie</h2>
+
+<div>
+    <button class="btn btn-primary mb-3" onclick='window.location="@Url.Action("Category", "Category")"'>Dodaj</button>
+</div>
+
+<div class="col-lg-4">
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">Nazwa</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Categories.Any())
+            {
+                foreach (var category in Model.Categories)
+                {
+                    <tr>
+                        @if (category.UserId == null)
+                        {
+                            <td class="fw-bold">
+                                @category.Name
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                <a href="@Url.Action("Category", "Category", new { categoryId = category.Id })" class="fw-bold">@category.Name</a>
+                            </td>
+                        }
+
+                        @if (category.UserId == null)
+                        {
+                            <td class="col-3"></td>
+                        }
+                        else
+                        {
+                            <td class="col-3">
+                                <button class="btn btn-danger"
+                                        onclick="deleteCategory('@category.Id', this)">
+                                    Usuń
+                                </button>
+                            </td>
+                        }
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td class="text-center" colspan="5">
+                        Brak kategorii.
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+</div>
+
+
+@section Scripts
+{
+    <script type="text/javascript">
+
+        function deleteCategory(id, btn) {
+            if (!confirm("Czy na pewno chcesz usnunąć tę kategorię?"))
+                return;
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("Delete", "Category")",
+                data: {
+                    categoryId: id
+                },
+                    success: function (data) {
+                        if (data.success) {
+                            var row = btn.parentNode.parentNode;
+                            row.parentNode.removeChild(row);
+                        } else {
+                            alert(data.message)
+                        }
+                    },
+                    error: function (data) {
+                        alert(data.message)
+                    },
+                    dataType: "json"
+                });
+        }
+
+    </script>
+
+
+}
+
